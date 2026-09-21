@@ -4,7 +4,7 @@
     <base href="https://cdn.jsdelivr.net/gh/web-ports/hollow-knight@latest/" />
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Unity WebGL Player | Hello night</title>
+    <title>Unity WebGL Player | Hollow Knight</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico" />
     <link rel="stylesheet" href="TemplateData/style.css" />
     <style>
@@ -252,58 +252,36 @@
         }
         return parts;
       }
-(async () => {
-    let dataUrl;
-    let wasmurl;
-    let loaderUrl;
-    let framework;
-
-    if (v === 1) {
-        const dataParts = getParts("Build/hk.data", 1, 42);
-        const wasmParts = getParts("Build/hk.wasm", 1, 2);
-
-        const sizes = await Promise.all(
-            [...dataParts, ...wasmParts].map(getSize)
-        );
-
+      (async () => {
+        if (v==1){
+        const allParts = [
+          ...getParts("Build/hk.data", 1, 42),
+          ...getParts("Build/hk.wasm", 1, 2),
+        ];
+        const sizes = await Promise.all(allParts.map(getSize));
         totalBytes = sizes.reduce((a, b) => a + b, 0);
-
-        [dataUrl, wasmurl] = await Promise.all([
-            mergeFiles(dataParts),
-            mergeFiles(wasmParts)
+        const [dataUrl, wasmurl] = await Promise.all([
+          mergeFiles(getParts("Build/hk.data", 1, 42)),
+          mergeFiles(getParts("Build/hk.wasm", 1, 2)),
         ]);
+        } else {
+             const [dataUrl, wasmurl] = await Promise.all([
 
-        loaderUrl = "Build/hk.loader.js";
-        framework = "/hk.framework.js";
+          mergeFilesv2(
 
-    } else {
-        [dataUrl, wasmurl] = await Promise.all([
-            mergeFilesv2(
-                getParts("Build/hktruffled.data", 1, 45),
-                "hktruffled.data"
-            ),
-            mergeFilesv2(
-                getParts("Build/hktruffled.wasm", 1, 2),
-                "hktruffled.wasm"
-            )
+            getParts("Build/hktruffled.data", 1, 45),
+            "hktruffled.data"
+
+          ),
+
+          mergeFilesv2(
+            getParts("Build/hktruffled.wasm", 1, 2),
+            "hktruffled.wasm"
+
+          ),
+
         ]);
-
-        loaderUrl = "Build/hktruffled.loader.js";
-        framework = "/hktruffled.framework.js";
-    }
-
-    const config = {
-        dataUrl: dataUrl,
-        frameworkUrl: "Build" + framework,
-        codeUrl: wasmurl,
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Team Cherry & Truffled",
-        productName: "Hollow Knight",
-        productVersion: "1.0"
-    };
-
-    // rest of your Unity setup...
-})();
+        }
         var buildUrl = "Build";
         if (v==1 ){
         var loaderUrl = buildUrl + "/hk.loader.js";
