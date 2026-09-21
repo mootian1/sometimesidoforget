@@ -217,7 +217,7 @@ function getParts(file, start, end) {
   try {
     await cleanupOldCaches(); 
     if (!(await isCached())) {
-      loadingText.textContent = "DOWNLOADING ASSETS...";
+      loadingText.textContent = "eating cheese...";
 
       const webglzip = await mergeFiles(
         getParts("StreamingAssets/aa/WebGL.zip", 1, 100)
